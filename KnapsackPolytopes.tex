@@ -1,0 +1,205 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage{url}
+\usepackage{graphicx} %If you want to include postscript graphics
+\DeclareGraphicsExtensions{.pdf,.eps,.fig,.pdf_tex}
+\usepackage{float}
+
+\usepackage[colorlinks,
+             linkcolor=black!50!red,
+             citecolor=blue,
+             pdftitle={Knapsack Polytope Ehrhart Polynomial},
+             pdfauthor={Ammar Husain},
+             pdfsubject={Polytopes,Knapsack},
+             pdfkeywords={Polytopes,Knapsack,Ehrhart},
+             pdfproducer={pdfLaTeX},
+             pdfpagemode=None,
+             bookmarksopen=true
+             bookmarksnumbered=true]{hyperref}
+
+\geometry{letterpaper}   
+
+\usepackage{amsmath}
+\usepackage{amssymb,amsfonts,bbm,mathrsfs,stmaryrd}
+
+%%% Theorems and references %%%
+\usepackage[amsmath,thmmarks]{ntheorem}
+\usepackage{hyperref}
+
+\newcommand\abs[1]{ \mid #1 \mid }
+
+\theoremstyle{change}
+
+\newtheorem{defn}[equation]{Definition}
+\newtheorem{definition}[equation]{Definition}
+\newtheorem{thm}[equation]{Theorem}
+\newtheorem{theorem}[equation]{Theorem}
+\newtheorem{prop}[equation]{Proposition}
+\newtheorem{proposition}[equation]{Proposition}
+\newtheorem{lemma}[equation]{Lemma}
+\newtheorem{cor}[equation]{Corollary}
+\newtheorem{exercise}[equation]{Exercise}
+\newtheorem{example}[equation]{Example}
+\theorembodyfont{\upshape}
+\theoremsymbol{\ensuremath{\Diamond}}
+\newtheorem{eg}[equation]{Example}
+\newtheorem{remark}[equation]{Remark}
+\theoremstyle{nonumberplain}
+\theoremsymbol{\ensuremath{\Box}}
+\newtheorem{proof}{Proof}
+\qedsymbol{\ensuremath{\Box}}
+
+\numberwithin{equation}{section}
+\usepackage{cleveref}
+
+\usepackage{svg}
+\usepackage{listings}
+\usepackage{caption}
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{%
+  \parbox{\textwidth}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}\vskip-4pt}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\lstset{frame=lrb,xleftmargin=\fboxsep,xrightmargin=-\fboxsep}
+
+\title{Knapsack Polytope Ehrhart Polynomial}
+\author{Ammar Husain}
+
+\begin{document}
+
+\section{Knapsack Problem}
+
+\begin{definition}[Knapsack Problem]
+Let $A_1 \cdots A_n$ be goods with values $v_i$ and weights $w_i$. The knapsack can include any natural number of each good with the condition that the total weight should be less than $W$. Call the numbers of each as $x_i$.
+
+\begin{eqnarray*}
+V &=& \sum v_i x_i\\
+\sum w_i x_i &\leq& W\\
+\end{eqnarray*}
+
+The goal is to maximize $V$.
+
+\end{definition}
+
+\begin{definition}[Decision Problem Formulation]
+Given a $V_0$, can we find a solution with $V \geq V_0$?
+\end{definition}
+
+\begin{lemma}[NP-Complete]
+This decision problem is NP-complete. The optimization problem is NP-hard.
+\end{lemma}
+
+\begin{lemma}[Augmented Form]
+
+The weight inequality can be rephrased by introducing another natural number $s$ to represent $W - \sum w_i x_i$. The system then becomes solving the following system in $\mathbb{N}^{n+2}$.
+
+\begin{eqnarray*}
+\begin{pmatrix}
+1 & - v_1 & \cdots & -v_n & 0\\
+0 & w_1 & \cdots & w_n & 1\\
+\end{pmatrix}
+\begin{pmatrix}
+V\\
+x_1\\
+\cdots\\
+x_n\\
+s\\
+\end{pmatrix}
+&=&
+\begin{pmatrix}
+0\\
+W\\
+\end{pmatrix}
+\end{eqnarray*}
+
+Another way is given by
+
+\begin{eqnarray*}
+\begin{pmatrix}
+v_1 & \cdots & v_n & 0\\
+w_1 & \cdots & w_n & 1\\
+\end{pmatrix}
+\begin{pmatrix}
+x_1\\
+\cdots\\
+x_n\\
+s\\
+\end{pmatrix}
+&=&
+\begin{pmatrix}
+V\\
+W\\
+\end{pmatrix}
+\end{eqnarray*}
+
+The solution with largest $V$ is sought.
+
+\end{lemma}
+
+\begin{lemma}[0-1 Algorithm]
+
+Let $m[i,j]$ be the maximum value attained by using items $\leq i$ and weight $\leq j$. In particular $i=0$ is the case when no items are allowed to be used and so no value can be attained no matter the weight.
+
+\begin{lstlisting}[label=KnapsackDynamicProgramming,caption=KnapsackDynamicProgramming]
+for j from 0 to W do:
+    m[0, j] := 0
+
+for i from 1 to n do:
+    for j from 0 to W do:
+        if w[i] > j then:
+            m[i, j] := m[i-1, j] \% We can't use item i with weight restriction j
+        else:
+            m[i, j] := max(m[i-1, j], m[i-1, j-w[i]] + v[i]) \% We can use it so we must decide whether it is worth doing so.
+\end{lstlisting}
+\end{lemma}
+
+\section{Ehrhart Polynomial}
+
+\begin{definition}[Ehrhart Polynomial]
+For a polytope $\mathcal{P} \subset \mathbb{R}^d$ with integral vertices, the count of points in $t\mathcal{P} \bigcap \mathbb{Z}^d$ as a function of positive integer $t$ denoted $L_\mathcal{P} (t)$.
+\end{definition}
+
+\begin{theorem}[Ehrhart]
+$L_{\mathcal{P}} (t)$ is a polynomial of degree $d$. The leading term is the relative volume. $L_\mathcal{P} (0) = \chi (\mathcal{P})$ and $L_{\mathcal{P}} (-t) = (-1)^d L_{\mathcal{P}^o} (t)$ where $\chi$ is Euler characteristic and $\mathcal{P}^o$ denotes relative interior.
+\end{theorem}
+
+If the vertices are rational but not integral, we get a quasipolynomial instead.
+
+\begin{definition}[Quasipolynomial]
+An expression of the form $c_d (t) t^d + \cdots c_1 (t) t + c_0 (t)$ with the $c_i (t)$ periodic functions in $t$.
+\end{definition}
+
+\section{Ehrhart Polynomial of Linear Programs}
+
+\begin{theorem}
+Let $\mathcal{P}$ be the polytope given by $x \in \mathbb{R}_{\geq 0}^d$ and constraint $Ax = b$ where $A \in M_{m \times d}(\mathbb{Z})$ and $b \in \mathbb{Z}^m$ are integral. $\mathcal{P}$ has rational vertices, not necessarily integral. Then the Ehrhart quasipolynomial is given by
+
+\begin{eqnarray*}
+L_\mathcal{P} (t) &=& \frac{1}{(2\pi i)^m} \int_{\abs{z_1}=\epsilon_1} \cdots  \int_{\abs{z_m}=\epsilon_m} \frac{z_1^{-t b_1 -1} \cdots z_m^{-t b_m -1}}{(1-\bold{z}^{\bold{c_1}}) \cdots (1-\bold{z}^{\bold{c_d}})}\\
+\end{eqnarray*}
+where $\bold{z}^{c_j}$ stands for the product $z_1^{A_{1j}} \cdots z_m^{A_{mj}}$. That is $\bold{z}$ stands for $z_1$ through $z_m$ and $\bold{c_j}$ is the j'th column of $A$. Also $0 < \epsilon_1 \cdots \epsilon_m <1$ are distinct real numbers.
+
+\end{theorem}
+
+\begin{proof}
+\url{https://arxiv.org/pdf/math/0202267.pdf}
+\end{proof}
+
+Looking at the second linear program phrasing of the knapsack problem givs $m=2$ and $d=n+1$ with $V=b_1$. $L_\mathcal{P} (1)$ counts the number of solutions and we wish to see how it depends on $b_1$. For some critical value, $V_{crit}$, the point count will be $0$ from then on. That means the optimal value that can be attained will be $V_{crit}-1$. That is the last case when the polytope has integral points.
+
+\begin{eqnarray*}
+L_\mathcal{P} (t) &=& \frac{-1}{4 \pi^2} \int_{\abs{z_1}=\epsilon_1} \int_{\abs{z_2}=\epsilon_2} \frac{z_1^{-t V -1} z_2^{-t W -1}}{(1-z_1^{v_1} z_2^{w_1}) \cdots (1-z_1^{v_n} z_2^{w_n}) (1-z_2)}\\
+\end{eqnarray*}
+
+\begin{cor}
+Expanding the term corresponding to the n'th good in a geometric series gives an expansion of $L_\mathcal{P} (t)$ for the first $n-1$ goods with total value $V-kv_n$ and total value $W-kw_n$ summed over $k$. This is obviously interpreted as deciding how many of good $n$ to pack and packing the remaining knapsack with the other $n-1$ goods.
+\end{cor}
+
+\begin{lemma}
+The other values of $t$ get interpreted as what happens if you are allowed to break each item into $\frac{1}{t}$ parts and then pack those into the knapsack. For large $t$, this tends to the continuous linear programming problem where one is allowed to use arbitrary fractions of the goods.
+\end{lemma}
+
+\begin{example}
+
+\end{example}
+
+\end{document}
