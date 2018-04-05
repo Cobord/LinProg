@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[11pt]{book}
 \usepackage[margin=1in]{geometry} 
 \usepackage{url}
 \usepackage{graphicx} %If you want to include postscript graphics
@@ -8,10 +8,10 @@
 \usepackage[colorlinks,
              linkcolor=black!50!red,
              citecolor=blue,
-             pdftitle={Knapsack Polytope Ehrhart Polynomial},
+             pdftitle={Polytope},
              pdfauthor={Ammar Husain},
              pdfsubject={Polytopes,Knapsack},
-             pdfkeywords={Polytopes,Knapsack,Ehrhart},
+             pdfkeywords={Polytopes,Knapsack,Ehrhart,Kushnirenko,Newton-Okounkov},
              pdfproducer={pdfLaTeX},
              pdfpagemode=None,
              bookmarksopen=true
@@ -65,6 +65,23 @@
 \author{Ammar Husain}
 
 \begin{document}
+
+\chapter{Newton-Okounkov Bodies}
+
+\begin{thm}[Bernstein-Kushnirenko]
+Let $f_1 \cdots f_n = 0$ be Laurent polynomials in $n$ variables. Read off the exponents of the monomials that show up for each $f$. This ignores the coefficients. Call these sets $A_i \subset \mathbb{Z}^n$ for each $f_i$. Let $\Delta_i$ be the convex hull thereof. Th number of solutions when the coefficients are generic is $n! V(\Delta_1 \cdots \Delta_n)$ is the Minkowski mixed volume. At an extreme, letting $A_i$ all be equal then gives $n! V(\Delta)$ with usual Euclidean volume.
+\end{thm}
+
+\begin{definition}[Mixed Volume]
+\begin{eqnarray*}
+V( \Delta_1 \cdots \Delta_n ) &=& \frac{1}{n!} \frac{d^n}{d\lambda_1 \cdots d\lambda_n} Vol ( \lambda_1 \Delta_1 + \cdots \lambda_n \Delta_n ) \mid_{\lambda_1 \cdots \lambda_n \to +0}
+\end{eqnarray*}
+
+where the $+$ inside $Vol$ indicates Minkowski sum.
+
+\end{definition}
+
+\chapter{Knapsack Polytope}
 
 \section{Knapsack Problem}
 
